@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="iso-8859-1"?> <muclient><script> <![CDATA[
+require "gmcphelper"
+require "serialize"
+spamtime=tonumber(GetVariable("spamtime")) or 60
+people={}
+origTitle=GetVariable("origTitle") or "none"
+msg={}
+local save=GetVariable("msg")
+if save~=nil and save~="" then
+loadstring(save)()
+end-- if
+save=nil
+if #msg<1 then
+msg={
+"Whoops! Seems like you missed me by %time%. I am currently %state%. You can try getting in touch a bit later, or I will reach out to you once I'm active again.",
+"This is %name%'s administrative assistant. They are currently %state%, and have been since %time% ago. I'm sure they'll respond to you once they are active again.",
+"You have reached %name%'s AFK automation, since %name% has been %state% for %time%. Please wait for %name%, or leave a message after the beep. *beep*",
+"Hey %target%, I've been %state% since %time% ago. I'll get in touch once I'm active again."
+}
+end-- if
+name=""
+target=""
+state=GetVariable("state") or "off"
+timer=tonumber(GetVariable("timer")) or os.time()
+
+function goafk(name, line, val)
+if state=="off" then
+Send("title (AFK: "..val[1]..")")
+state=val[1]
+timer=os.time()
+else
+Send("title "..origTitle)
+state="off"
+end-- if
+Note("AFK "..state)
+SaveState()
+end-- func
+
+function OnPluginInstall()
+Note("GoAFK by Enne: type 'goafk' for help.")
+end-- func
+
+function OnPluginSaveState()
+SetVariable("state", _G.state)
+SetVariable("timer", _G.timer)
+SetVariable("msg", serialize.save("msg", _G.msg))
+SetVariable("origTitle", origTitle)
+SetVariable("spamtime", spamtime)
+end-- func
+
+function respond(name, line, val)
+target=val[1]
+local curtime=os.time()
+if state~="off" then
+if people[target]~=nil and curtime-people[target]<_G.spamtime then
+return
+else
+people[target]=curtime
+end-- if
+if _G.name==nil or _G.name=="" then
+_G.name=gmcp("char.base.name")
+end-- if
+Send("tell "..val[1].." "..string.gsub(msg[math.random(#msg)], "%%[a-zA-Z]+%%", {["%name%"]=_G.name, ["%state%"]=_G.state, ["%time%"]=timedif(_G.timer), ["%target%"]=_G.target}))
+end-- if
+end-- func
+
+function config(name, line, val)
+local newSpamtime=utils.inputbox("Ignore repeated tells from the same person for (seconds):", "Spam Protection Time", "".._G.spamtime)
+if newSpamtime~=nil and newSpamtime~="" then
+_G.spamtime=tonumber(newSpamtime)
+Note("Spam protection time set.")
+end-- if
+local newTitle=utils.inputbox("Enter your default title that goafk will use when returning from AFK.", "Title", _G.origTitle)
+if newTitle~=nil and newTitle~=_G.origTitle then
+_G.origTitle=newTitle
+Note("Default title set.")
+end-- if
+local oldMsg=table.concat(_G.msg, "\r\n")
+local newMsg=utils.editbox("One of these messages will be randomly picked to reply to tells with while you're AFK. Use %name% for your character's name, %target% for the name of the person we'll be responding to, %state% for your away message, and %time% for the amount of time you've been away for.", "AFK messages", oldMsg)
+if newMsg~=nil and newMsg~=oldMsg then
+_G.msg={}
+for line in string.gmatch(newMsg, "[^\r\n]+") do
+table.insert(_G.msg, line)
+end-- for
+Note("Messages set.")
+end--if
+SaveState()
+end-- func
+
+function timedif(stamp1, stamp2)
+stamp2=stamp2 or os.time()
+local units={}
+local rem=math.abs(stamp2-stamp1)
+table.insert(units, {"day", "a", math.floor(rem/(60*60*24))})
+rem=math.fmod(rem, (60*60*24))
+table.insert(units, {"hour", "an", math.floor(rem/(60*60))})
+rem=math.fmod(rem, (60*60))
+table.insert(units, {"minute", "a", math.floor(rem/60)})
+rem=math.fmod(rem, 60)
+table.insert(units, {"second", "a", math.floor(rem)})
+local filtered={}
+for k,v in pairs(units) do
+if v[3]<1 then
+goto continue
+end-- if
+table.insert(filtered, (#filtered==0 and v[3]==1 and v[2] or v[3]).." "..v[1]..(v[3]>1 and "s" or ""))
+::continue::
+end-- for
+units=nil
+
+local out=""
+if #filtered==1 then
+out=filtered[1]
+filtered=nil
+return out
+end-- if
+for k,v in pairs(filtered) do
+if k==#filtered then
+out=out..(#filtered>2 and ", and " or " and ")
+elseif k>1 then
+out=out..", "
+end-- if
+out=out..v
+end-- for
+filtered=nil
+return out
+end-- func
+]]> </script>
+
+<aliases>
+<alias
+match="goafk"
+enabled="y"
+send_to="12"
+>
+	<send><![CDATA[
+Note("<GoAFK by Enne>:")
+Note("Type goafkconfig to set configuration. If you wish to keep things as they are, just hit escape or click on cancel on the prompts that appear, otherwise fill in the information, and click on OK.")
+Note("Once you're happy with your configuration, typing 'goafk <away message>' will set your title to AFK (<away message>) and turn on the AFK responder.")
+Note("Typing 'goafk off' will set your title to the one you had set with 'goafkconfig', and turn off AFK responder.")
+Note("For bugs, suggestions, questions, anything, send a tell or note to enne.")
+Note("Enjoy! :)")
+]]></send>
+</alias>
+<alias
+match="goafkconfig"
+enabled="y"
+script="config"
+>
+</alias>
+<alias
+match="goafk *"
+enabled="y"
+script="goafk"
+>
+</alias>
+</aliases>
+
+<triggers>
+<trigger
+match="Your eyes glaze over."
+enabled="y"
+send_to="12"
+keep_evaluating="y"
+>
+<send>
+Send("\n")
+</send>
+</trigger>
+<trigger
+match="^(?:.* )?(\w+) tells you '.+?'$"
+enabled="y"
+regexp="y"
+script="respond"
+>
+</trigger>
+</triggers>
+
+<plugin name="enne_goafk" author="enne" id="beb91c385b80b2246e323ca4" language="Lua" purpose="type goafk &lt;message&gt; to go afk with a message and prevent idling out" date_written="2022-06-09 01:43:15" requires="5.07" version="1.0" save_state="y"> </plugin>
+</muclient>
