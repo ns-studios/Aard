@@ -158,16 +158,17 @@ script="goafk"
 
 <triggers>
 <trigger
+name="GoAFKIdle"
 match="Your eyes glaze over."
 enabled="y"
-send_to="12"
-keep_evaluating="y"
+send_to="10"
 >
 <send>
-Send("\n")
+echo
 </send>
 </trigger>
 <trigger
+name="GoAFKTell"
 match="^(?:.* )?(\w+) tells you '.+?'$"
 enabled="y"
 regexp="y"
