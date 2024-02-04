@@ -6,7 +6,7 @@ Welcome to Enne's magical Aardwolf plugin garden.
 
 ## 🪷 GoAFK
 
-Type goafk <your away message>, and GoAFK will set your title to your AFK message, automatically reply to received tells with customizable messages, and prevent you from disconnecting due to inactivity.
+Type goafk &lt;your away message&gt;, and GoAFK will set your title to your AFK message, automatically reply to received tells with customizable messages, and prevent you from disconnecting due to inactivity.
 
 Commands:
 
@@ -29,7 +29,7 @@ The name of the player sending you a tell while you're AFK.
 
 * %state%
 
-The AFK message you've entered with the &ldquo;goafk <away message>&rdquo; command.
+The AFK message you've entered with the &ldquo;goafk &lt;away message&gt;&rdquo; command.
 
 * %time%
 
