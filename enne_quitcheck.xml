@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="iso-8859-1"?> <muclient><script> <![CDATA[
+<?xml version="1.0" encoding="iso-8859-1"?> <muclient>
+<script> <![CDATA[
 require "serialize"
 container=GetVariable("container") or ""
 local save=GetVariable("items")
@@ -82,6 +83,14 @@ script="start"
 </aliases>
 
 <triggers>
+<trigger
+name="enne_quitcheck_start"
+match="<-<-<-enne quitcheck start->->->"
+enabled="y"
+omit_from_output="y"
+script="start"
+>
+</trigger>
 <trigger
 name="enne_quitcheck_parse"
 match="^\[\s*\d+\]\s*\(.+?\)\s*\-\s*(\d+)\s*.*?(?|\(inside .+?\/(\d+)\)|\((Keyring)\))?$"
