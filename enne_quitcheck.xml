@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?> <muclient>
-<script> <![CDATA[
+<?xml version="1.0" encoding="iso-8859-1"?> <muclient><script> <![CDATA[
 require "serialize"
 container=GetVariable("container") or ""
 local save=GetVariable("items")
@@ -110,5 +109,5 @@ script="stop"
 </trigger>
 </triggers>
 
-<plugin name="enne_quitcheck" author="enne" id="74d08f3caafc4bf30ad45987" language="Lua" purpose="type qc put &lt;container&gt; to drop everything on the quitcheck list in a container, and the script will remember what items you dropped, and let you get them when you connect again with qc get" date_written="2022-07-05 08:37:01" requires="5.07" version="1.0" save_state="y"> </plugin>
+<plugin name="enne_quitcheck" author="enne" id="74d08f3caafc4bf30ad45987" language="Lua" purpose="Uses quit check to put items in a container, remembers where they were, and can pick them back up." date_written="2022-07-05 08:37:01" requires="5.07" version="1.0" save_state="y"> </plugin>
 </muclient>
