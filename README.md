@@ -14,26 +14,26 @@ Commands:
 
 Shows configuration for the AFK system, letting you set:
 
-    * how long the auto-responder waits before responding to the same person again (in seconds) (default 60).
-    * The title to be used when the AFK mode is removed with &ldquo;goafk off&rdquo;.
-    * The list of messages that will be randomly picked from for auto-responding.
+* how long the auto-responder waits before responding to the same person again (in seconds) (default 60).
+* The title to be used when the AFK mode is removed with &ldquo;goafk off&rdquo;.
+* The list of messages that will be randomly picked from for auto-responding.
 
 The messages are separated by a new line, and there are wildcards that can be used in the message. They are:
-        * %name%
+* %name%
 
 Your character's name.
 
-        * %target%
+* %target%
 
 The name of the player sending you a tell while you're AFK.
 
-        * %state%
+* %state%
 
 The AFK message you've entered with the &ldquo;goafk <away message>&rdquo; command.
 
-        * %time%
+* %time%
 
-The amount of time that has passed since you turned on the AFK mode, e.g., 2 hours, 1 minute, and 2 seconds ago.
+The amount of time that has passed since you've turned on the AFK mode, e.g., 2 hours, 1 minute, and 2 seconds ago.
 
 This can be combined into messages such as:
 
