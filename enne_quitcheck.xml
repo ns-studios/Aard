@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="iso-8859-1"?> <muclient><script> <![CDATA[
+require "serialize"
+container=GetVariable("container") or ""
+local save=GetVariable("items")
+items={}
+if save~=nil and save~="" then
+loadstring(save)()
+end-- if
+save=nil
+action=""
+
+function start(name, line, val)
+action=val[1]
+container=val[2]
+if action=="get" then
+act()
+return
+end-- if
+items={}
+Send("quit check")
+EnableTrigger("enne_quitcheck_parse", true)
+Send("echo <-<-<-enne quitcheck stop->->->")
+EnableTrigger("enne_quitcheck_stop", true)
+end-- func
+
+function parse(name, line, val)
+table.insert(items, #items+1, {val[1], (val[2]==nil and "" or val[2])})
+end-- func
+
+function stop(name, line, val)
+EnableTrigger("enne_quitcheck_parse", false)
+EnableTrigger("enne_quitcheck_stop", false)
+act()
+end-- func
+
+function act()
+if #items<1 then
+Note("No items to "..action..".")
+return
+end-- if
+local action2=(action=="get" and "put " or "get ")
+action=action.." "
+for key,val in pairs(items) do
+if action=="get " then
+Send(action..val[1].." "..container)
+end-- if
+if val[2]~="" then
+if val[2]=="Keyring" then
+Send("keyring "..action2..val[1])
+else
+Send(action2..val[1].." "..val[2])
+end-- if
+end-- if
+if action=="put " then
+Send(action..val[1].." "..container)
+end-- if
+end-- for
+action=""
+action2=nil
+if action=="put " then
+SaveState()
+end-- if
+end-- func
+
+function OnPluginSaveState()
+SetVariable ("items", serialize.save("items", items))
+end-- func
+
+function OnPluginInstall()
+Note("Quitcheck by Enne: type qc put <container name or container id> to put all of your items listed in quit check into a container (even if they are on your keyring or inside a container), and type qc get <container name or id> to get them back, and it will put them back on your keyring and into your containers.")
+end-- func
+]]> </script>
+<aliases>
+<alias
+match="^qc (put|get) (.+)$"
+enabled="y"
+regexp="y"
+expand_variables="y"
+script="start"
+>
+</alias>
+</aliases>
+
+<triggers>
+<trigger
+name="enne_quitcheck_parse"
+match="^\[\s*\d+\]\s*\(.+?\)\s*\-\s*(\d+)\s*.*?(?|\(inside .+?\/(\d+)\)|\((Keyring)\))?$"
+enabled="n"
+regexp="y"
+omit_from_output="y"
+script="parse"
+>
+</trigger>
+<trigger
+name="enne_quitcheck_stop"
+match="<-<-<-enne quitcheck stop->->->"
+enabled="n"
+omit_from_output="y"
+script="stop"
+>
+</trigger>
+</triggers>
+
+<plugin name="enne_quitcheck" author="enne" id="74d08f3caafc4bf30ad45987" language="Lua" purpose="type qc put &lt;container&gt; to drop everything on the quitcheck list in a container, and the script will remember what items you dropped, and let you get them when you connect again with qc get" date_written="2022-07-05 08:37:01" requires="5.07" version="1.0" save_state="y"> </plugin>
+</muclient>
