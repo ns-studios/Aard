@@ -65,19 +65,19 @@ end-- if
 end-- func
 
 function config(name, line, val)
-local newSpamtime=utils.inputbox("Ignore repeated tells from the same person for (seconds):", "Spam Protection Time", "".._G.spamtime)
-if newSpamtime~=nil and newSpamtime~="" then
+local newSpamtime=utils.inputbox("Ignore repeated tells from the same person for (seconds):", "Spam Protection Time", "".._G.spamtime, nil, nil, {["ok_button"]="&Save", ["cancel_button"]="Do&n't save"})
+if newSpamtime~=nil and newSpamtime~="" and tonumber(newSpamtime)~=_G.spamtime then
 _G.spamtime=tonumber(newSpamtime)
 Note("Spam protection time set.")
 end-- if
-local newTitle=utils.inputbox("Enter your default title that goafk will use when returning from AFK.", "Title", _G.origTitle)
-if newTitle~=nil and newTitle~=_G.origTitle then
+local newTitle=utils.inputbox("Enter your default title that goafk will use when returning from AFK.", "Title", _G.origTitle, nil, nil, {["ok_button"]="&Save", ["cancel_button"]="Do&n't save"})
+if newTitle~=nil and newTitle~="" and newTitle~=_G.origTitle then
 _G.origTitle=newTitle
 Note("Default title set.")
 end-- if
 local oldMsg=table.concat(_G.msg, "\r\n")
-local newMsg=utils.editbox("One of these messages will be randomly picked to reply to tells with while you're AFK. Use %name% for your character's name, %target% for the name of the person we'll be responding to, %state% for your away message, and %time% for the amount of time you've been away for.", "AFK messages", oldMsg)
-if newMsg~=nil and newMsg~=oldMsg then
+local newMsg=utils.editbox("One of these messages will be randomly picked to reply to tells with while you're AFK. Use %name% for your character's name, %target% for the name of the person we'll be responding to, %state% for your away message, and %time% for the amount of time you've been away for.", "AFK messages", oldMsg, nil, nil, {["ok_button"]="&Save", ["cancel_button"]="Do&n't save"})
+if newMsg~=nil and newMsg~="" and newMsg~=oldMsg then
 _G.msg={}
 for line in string.gmatch(newMsg, "[^\r\n]+") do
 table.insert(_G.msg, line)
