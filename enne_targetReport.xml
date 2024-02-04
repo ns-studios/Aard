@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?> <muclient><script> <![CDATA[
+require "gmcphelper"
+function OnPluginInstall()
+AddAlias("enne_target_report", "^trep (.+)$", "", alias_flag.Enabled+alias_flag.RegularExpression+alias_flag.IgnoreAliasCase, "report")
+end-- func
+
+function report(name, line, val)
+if gmcp("char.status.pos")~="Fighting" then
+Note("Not fighting.")
+return
+end-- if
+local curHp=tonumber(gmcp("char.vitals.hp"))
+local maxHp=tonumber(gmcp("char.maxstats.maxhp"))
+local hp=math.floor((curHp/maxHp)*100)
+local mob=gmcp("char.status.enemy")
+local mobHp=tonumber(gmcp("char.status.enemypct"))
+local area=gmcp("room.info.zone")
+local roomname=gmcp("room.info.name")
+local room=gmcp("room.info.num")
+Send(val[1].." @R"..hp.."%@w hp - fighting with "..mob.." (@G"..mobHp.."%@w) in "..area.."/"..roomname.." "..room.."!")
+end-- func
+]]> </script>
+<plugin name="enne_targetReport" author="enne" id="c89312cb3a3fe5c019f0f1cd" language="Lua" purpose="report your current hp, enemy name, enemy hp, zone, and room number to a channel" date_written="2022-08-12 16:26:59" requires="5.07" version="1.0"> </plugin>
+</muclient>
