@@ -31,6 +31,7 @@ timer=os.time()
 else
 Send("title "..origTitle)
 state="off"
+people={}
 end-- if
 Note("AFK "..state)
 SaveState()
